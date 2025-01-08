@@ -6,73 +6,25 @@ import {
   TextContainer,
   ResourceList,
   TextField,
+  Thumbnail,
 } from "@shopify/polaris";
 import { Form } from "@remix-run/react";
-// import { createComboProduct } from "./ComboServices/ComboServices";
 
-// export async function action({ request }) {
-//   // Parse the form data
-//   const formData = await request.formData();
-//   const actionType = formData.get("actionType");
-
-//   if (actionType === "create") {
-//     console.log("Creating Combo Product");
-//     const comboName = formData.get("comboName");
-//     const selectedProducts = JSON.parse(formData.get("selectedProducts"));
-
-//     // Create the combo object
-//     const combo1 = {
-//       title: comboName,
-//       products: selectedProducts.map((product) => ({
-//         id: product.id,
-//         title: product.title,
-//       })),
-//     };
-//     const selectedProducts1 = JSON.parse(formData.get("selectedProducts"));
-
-//     // Create the combo object
-//     const combo = {
-//       title: comboName,
-//       products: selectedProducts1.map((product) => ({
-//         name: product.title,
-//         productId: product.id,
-//       })),
-//     };
-//     console.log("combe cheack", combo);
-//     // Call the createComboProduct function
-//     const createCompo = await createComboProduct(combo);
-//     console.log(createCompo);
-//   }
-//   return new Response(JSON.stringify({ success: true, actionType }), {
-//     status: 200,
-//   });
-// }
 
 const ResourceAdd = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [comboName, setComboName] = useState("");
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [setCompoPrice, setDiscountPercentagePrice] = useState("");
 
   useEffect(() => {
-    // Update the hidden input field with the selected products whenever the state changes
     const selectedProductField = document.getElementById("selectedProducts");
     if (selectedProductField) {
       selectedProductField.value = JSON.stringify(selectedProducts);
     }
   }, [selectedProducts]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
 
-    const form = event.target;
-    const actionField = document.createElement("input");
-    actionField.type = "hidden";
-    actionField.name = "actionType";
-    actionField.id = "actionType";
-    actionField.value = "create";
-    form.appendChild(actionField);
-
-    // Submit the form
-    form.submit();
-  };
 
   const handleProductSelection = async () => {
     const selected = await shopify.resourcePicker({
@@ -81,59 +33,167 @@ const ResourceAdd = () => {
     });
     setSelectedProducts(selected);
   };
-  const [comboName, setComboName] = useState("");
 
   const handleComboNameChange = (value) => {
     setComboName(value);
   };
 
+  const handleDiscountChange = (value) => {
+    setDiscountPercentage(value);
+  };
+
+  const calculateDiscountedPrice = (price) => {
+    return (price - (price * discountPercentage) / 100).toFixed(2);
+  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const form = event.target;
+
+    const actionField = document.createElement("input");
+    actionField.type = "hidden";
+    actionField.name = "actionType";
+    actionField.id = "actionType";
+    actionField.value = "create-discount";
+    form.appendChild(actionField);
+    form.submit();
+  };
+
   return (
-    <Page title="Create Combo Product">
+    <Page
+      title="Create Discount Combo Product"
+      backAction={{ onAction: () => history.back() }}
+    >
       <LegacyCard sectioned>
         <Form method="post" id="comboForm" onSubmit={handleSubmit}>
           {/* Combo Name Input */}
+          <TextContainer>
+            <h2 style={{ marginBottom: "10px" }}>Step 1: Enter Combo Name</h2>
+          </TextContainer>
           <TextField
             label="Combo Name"
             name="comboName"
-            value={comboName} // Controlled value
-            onChange={handleComboNameChange} // Change handler
+            value={comboName}
+            onChange={handleComboNameChange}
             placeholder="Enter Combo Name"
             required
+            style={{ marginBottom: "10" }}
+          />
+          <br />
+
+          {/* Discount Percentage Input */}
+          <TextContainer>
+            <h2 style={{ marginTop: "10px", marginBottom: "10px" }}>
+              Step 2: Set Discount Percentage
+            </h2>
+          </TextContainer>
+          <TextField
+            label="Discount Percentage"
+            type="number"
+            value={discountPercentage}
+            onChange={handleDiscountChange}
+            suffix="%"
+            placeholder="Enter discount (e.g., 10 for 10%)"
           />
 
           {/* Hidden Field for Selected Products */}
           <input type="hidden" name="selectedProducts" id="selectedProducts" />
+          <br />
+          <TextContainer>
+            <div style={{ display: "flex", justifyContent: "start" }}>
+              <div>
+                <h2 style={{ marginTop: "10px", marginBottom: "10px" }}>
+                  Step 3: Select The Product
+                </h2>
+              </div>
 
+              <div style={{ marginLeft: "30px", marginTop: "5px" }}>
+                <Button onClick={handleProductSelection} primary>
+                  Select Products
+                </Button>
+              </div>
+            </div>
+          </TextContainer>
           {/* Product Selection */}
-          <div style={{ marginTop: "20px" }}>
-            <Button onClick={handleProductSelection} primary>
-              Select Products
-            </Button>
-          </div>
 
-          {/* Selected Products List */}
+          {/* Selected Products Table */}
           {selectedProducts.length > 0 && (
             <div style={{ marginTop: "20px" }}>
               <TextContainer>
-                <p>Selected Products:</p>
+                <p>Selected Products with Discounted Prices:</p>
               </TextContainer>
-              <ResourceList
-                resourceName={{ singular: "product", plural: "products" }}
-                items={selectedProducts}
-                renderItem={(item) => {
-                  const { id, title } = item;
-                  return (
-                    <ResourceList.Item
-                      id={id}
-                      accessibilityLabel={`View details for ${title}`}
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr>
+                    <th
+                      style={{
+                        borderBottom: "1px solid #ccc",
+                        padding: "10px",
+                      }}
                     >
-                      <div>{title}</div>
-                    </ResourceList.Item>
-                  );
-                }}
-              />
+                      Image
+                    </th>
+                    <th
+                      style={{
+                        borderBottom: "1px solid #ccc",
+                        padding: "10px",
+                      }}
+                    >
+                      Product Name
+                    </th>
+                    <th
+                      style={{
+                        borderBottom: "1px solid #ccc",
+                        padding: "10px",
+                      }}
+                    >
+                      Original Price
+                    </th>
+                    <th
+                      style={{
+                        borderBottom: "1px solid #ccc",
+                        padding: "10px",
+                      }}
+                    >
+                      Discounted Price
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedProducts.map((product) => {
+                    // Check if the product has variants and if the price exists
+                    const originalPrice = product.variants?.[0]?.price || "N/A";
+                    const discountedPrice =
+                      originalPrice === "N/A"
+                        ? "N/A"
+                        : calculateDiscountedPrice(originalPrice);
+
+                    return (
+                      <tr key={product.id}>
+                        <td
+                          style={{
+                            padding: "1px",
+                            textAlign: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Thumbnail
+                            source={product.image?.src || ""}
+                            alt={product.title}
+                            size="small"
+                          />
+                        </td>
+                        <td style={{ padding: "10px" }}>{product.title}</td>
+                        <td style={{ padding: "10px" }}>{originalPrice}</td>
+                        <td style={{ padding: "10px" }}>{discountedPrice}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
+
+          <input type="hidden" id="price" name="price" value="100" />
 
           {/* Submit Button */}
           <div
@@ -144,7 +204,7 @@ const ResourceAdd = () => {
             }}
           >
             <Button submit primary>
-              Create Combo
+              Create Discount Combo
             </Button>
           </div>
         </Form>

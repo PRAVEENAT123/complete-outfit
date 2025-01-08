@@ -13,6 +13,7 @@ import { getCompoProduct } from "./ComboServices/ComboServices";
 // Loader function to fetch combo products
 export async function loader() {
   const products = await getCompoProduct();
+  console.log(products)
   if (products.error) {
     return json({ error: products.error, details: products.details });
   }

@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "fc97b669fd43d1f785ff5a216591dfc5"
-application_url = "https://dresses-trinity-syracuse-marina.trycloudflare.com"
+application_url = "https://bronze-reproduction-delivering-activity.trycloudflare.com"
 embedded = true
 name = "Complete-outfit"
 handle = "complete-outfit"
@@ -15,13 +15,13 @@ api_version = "2024-10"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "write_products"
+scopes = "write_products,read_products"
 
 [auth]
 redirect_urls = [
-  "https://dresses-trinity-syracuse-marina.trycloudflare.com/auth/callback",
-  "https://dresses-trinity-syracuse-marina.trycloudflare.com/auth/shopify/callback",
-  "https://dresses-trinity-syracuse-marina.trycloudflare.com/api/auth/callback"
+  "https://bronze-reproduction-delivering-activity.trycloudflare.com/auth/callback",
+  "https://bronze-reproduction-delivering-activity.trycloudflare.com/auth/shopify/callback",
+  "https://bronze-reproduction-delivering-activity.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
@@ -30,3 +30,4 @@ embedded = false
 [build]
 dev_store_url = "jerry-styles.myshopify.com"
 automatically_update_urls_on_dev = true
+include_config_on_deploy = true

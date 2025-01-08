@@ -18,15 +18,15 @@ export default function App() {
 
   return (
     <AppProvider isEmbeddedApp apiKey={apiKey}>
-      {/* <NavMenu> */}
+      <NavMenu>
         {/* <Link to="/app" rel="home">
           Home
         </Link> */}
-        {/* <Link to="/app/additional">Additional page</Link> */}
+        <Link to="/app/comboProduct">Combo Products</Link>
         {/* <Link to="/app/combo_product">Combo Offers</Link> */}
         {/* <Link to="/app/ResouresAdd">Create Combo </Link> */}
         {/* <Link to="/app/discountCombo">Discount Combo</Link> */}
-      {/* </NavMenu> */}
+      </NavMenu>
       <Outlet />
     </AppProvider>
   );

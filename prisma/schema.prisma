@@ -40,6 +40,24 @@ model ComboProduct {
   products  Product[] // One-to-Many relationship
 }
 
+model DiscountComboProduct {
+  id            Int       @id @default(autoincrement())
+  title         String
+  description   String?
+  discountType  String
+  discountValue Float
+  totalPrice    Float
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  discountedProducts     DiscountedProduct[] // Relation to Product table
+}
+model DiscountedProduct {
+  id             Int           @id @default(autoincrement())// That is 
+  name           String
+  productId      String?
+  comboProductId Int?          // Foreign key
+  comboProduct   DiscountComboProduct? @relation(fields: [comboProductId], references: [id])
+}
 model Product {
   id             Int           @id @default(autoincrement())// That is 
   name           String

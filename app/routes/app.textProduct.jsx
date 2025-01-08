@@ -13,92 +13,90 @@ import { authenticate } from "../shopify.server";
 import { createComboProduct } from "./ComboServices/ComboServices";
 
 export async function action({ request }) {
-  const { admin } = await authenticate.admin(request);
-  console.log("Entered Action Method");
-
   // Parse the form data
+  const { admin } = await authenticate.admin(request);
+
   const formData = await request.formData();
   const actionType = formData.get("actionType");
 
   if (actionType === "create") {
     console.log("Creating Combo Product");
     const comboName = formData.get("comboName");
-
-    // Parse the selected products from form data
-    const selectedProducts1 = JSON.parse(formData.get("selectedProducts"));
-
     // Create the combo object
-    const combo = {
-      title: comboName,
-      products: selectedProducts1.map((product) => ({
-        name: product.title,
-        productId: product.id,
-      })),
-    };
 
-    // Extract product IDs
-    const comboProductIds = selectedProducts1.map((product) => product.id);
+const selectedProducts1 = JSON.parse(formData.get("selectedProducts"));
+const combo = {
+  title: comboName,
+  products: selectedProducts1.map((product) => ({
+    name: product.title,
+    productId: product.id,
+  })),
+};
 
-    console.log("Combo Check:", combo);
+// Correctly extract product IDs
+      const comboProductIds = selectedProducts1.map((product) => product.id);
+      const ComboName= selectedProducts1.map((product)=>(product.title))
 
-    // Call the createComboProduct function
-    const createCompo = await createComboProduct(combo);
-    console.log("Created Combo Product:", createCompo);
+console.log("Combo check", combo);
 
-    // Mutation to create the combo product
-    const response = await admin.graphql(
-      `#graphql
-        mutation populateProduct($product: ProductCreateInput!) {
-          productCreate(product: $product) {
-            product {
-              id
-              title
-              handle
-              status
-              metafields(namespace: "combo_products", first: 10) {
-                edges {
-                  node {
-                    key
-                    value
-                    type
-                  }
-                }
-              }
-              variants(first: 10) {
-                edges {
-                  node {
-                    id
-                    price
-                    barcode
-                    createdAt
-                  }
-                }
+// Call the createComboProduct function
+const createCompo = await createComboProduct(combo);
+console.log(createCompo);
+
+// Mutation to create the combo product
+const response = await admin.graphql(
+  `#graphql
+    mutation populateProduct($product: ProductCreateInput!) {
+      productCreate(product: $product) {
+        product {
+          id
+          title
+          handle
+          status
+          metafields(namespace: "combo_products", first: 10) {
+            edges {
+              node {
+                key
+                value
+                type
               }
             }
           }
-        }`,
-      {
-        variables: {
-          product: {
-            title: comboName, // Set combo product title directly
-            productType: "Combo",
-            metafields: [
-              {
-                namespace: "combo_products",
-                key: "included_products",
-                value: JSON.stringify(comboProductIds),
-                type: "json",
-              },
-            ],
+          variants(first: 10) {
+            edges {
+              node {
+                id
+                price
+                barcode
+                createdAt
+              }
+            }
+          }
+        }
+      }
+    }`,
+  {
+    variables: {
+      product: {
+        title: JSON.stringify(comboName), // Set combo product title
+        productType: "Combo",
+        metafields: [
+          {
+            namespace: "combo_products",
+            key: "included_products",
+            value: JSON.stringify(comboProductIds),
+            type: "json",
           },
-        },
+        ],
       },
-    );
-
-    console.log("GraphQL Response:", response);
-    return response;
+    },
+  },
+      );
+      console.log(response)
+      return response;
+    // Create the combo object
+    
   }
-
   return new Response(JSON.stringify({ success: true, actionType }), {
     status: 200,
   });
@@ -156,10 +154,8 @@ const ResourceAdd = () => {
             placeholder="Enter Combo Name"
             required
           />
-
           {/* Hidden Field for Selected Products */}
           <input type="hidden" name="selectedProducts" id="selectedProducts" />
-
           {/* Product Selection */}
           <div style={{ marginTop: "20px" }}>
             <Button onClick={handleProductSelection} primary>
