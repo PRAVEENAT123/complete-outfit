@@ -1,0 +1,35 @@
+{% assign included_product_ids = product.metafields.combo_products.included_products %}
+
+{% if included_product_ids %}
+  <p><strong>Combo Product:</strong></p>
+  <ul>
+    {% assign included_product_ids = included_product_ids | split: "," %}
+    
+    {% for gid in included_product_ids %}
+      {% assign product_id = gid | split: "/" | last %}
+      {% assign included_product = all_products[product_id] %}
+
+      {% if included_product %}
+        <li>
+          <a href="{{ included_product.url }}">{{ included_product.title }}</a>
+          <span class="price">{{ included_product.price | money }}</span>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <p><strong>Regular Product</strong></p>
+{% endif %}
+
+
+
+{% schema %}
+  {
+    "name": "Combo Products",
+    "target": "section",
+    "enabled_on": {
+      "templates": ["product"]
+    },
+    "settings": []
+  }
+{% endschema %}

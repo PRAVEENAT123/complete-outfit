@@ -21,19 +21,15 @@ import { createComboProduct, createDicountComboProduct } from "../db.server";
 
 export async function action({ request }) {
   const { admin } = await authenticate.admin(request);
-  console.log("Entered Action Method");
 
   // Parse the form data
   const formData = await request.formData();
   const actionType = formData.get("actionType");
 
   if (actionType === "create") {
-    console.log("Creating Combo Product");
     const comboName = formData.get("comboName");
-
     // Parse the selected products from form data
     const selectedProducts1 = JSON.parse(formData.get("selectedProducts"));
-
     // Create the combo object
     const combo = {
       title: comboName,
@@ -150,7 +146,7 @@ export async function action({ request }) {
                   node {
                     key
                     value
-                    type
+                    type  
                   }
                 }
               }

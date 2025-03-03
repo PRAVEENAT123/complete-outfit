@@ -1,7 +1,7 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "fc97b669fd43d1f785ff5a216591dfc5"
-application_url = "https://bronze-reproduction-delivering-activity.trycloudflare.com"
+application_url = "https://percent-biblical-valve-virtual.trycloudflare.com"
 embedded = true
 name = "Complete-outfit"
 handle = "complete-outfit"
@@ -19,9 +19,9 @@ scopes = "write_products,read_products"
 
 [auth]
 redirect_urls = [
-  "https://bronze-reproduction-delivering-activity.trycloudflare.com/auth/callback",
-  "https://bronze-reproduction-delivering-activity.trycloudflare.com/auth/shopify/callback",
-  "https://bronze-reproduction-delivering-activity.trycloudflare.com/api/auth/callback"
+  "https://percent-biblical-valve-virtual.trycloudflare.com/auth/callback",
+  "https://percent-biblical-valve-virtual.trycloudflare.com/auth/shopify/callback",
+  "https://percent-biblical-valve-virtual.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]
